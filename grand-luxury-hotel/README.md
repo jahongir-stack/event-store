@@ -13,6 +13,7 @@ python -m venv .venv
 # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env # Windows: copy .env.example .env
+python manage.py makemigrations
 python manage.py migrate
 python manage.py seed_demo
 python manage.py createsuperuser
@@ -32,7 +33,7 @@ Visit http://localhost:5173; staff admin: http://localhost:8000/admin.
 ## Features
 - 5 room categories, actual physical room inventory, rich descriptions and images.
 - Date-scoped availability and genuine reservation records; overlapping stays on the same physical room are prevented in the backend.
-- Optional PostgreSQL exclusion constraint migration for **database-level protection** against concurrent overlapping stays. SQLite is for development only and serializes writes differently.
+- PostgreSQL room-type row locking serializes bookings made through this reservation API; direct administrative database writes should be restricted. SQLite is intended for local development only.
 - User registration/login, personal dashboard, reference codes, cancellation policy and printable confirmation.
 - Staff CRUD in Django admin: inventory, housekeeping, pricing, seasonal rates, promo codes, restaurant, services, reviews and staff roles.
 - Staff real-time database-backed business metrics.
@@ -54,3 +55,6 @@ POST /api/contact/
 See backend/.env.example. By default SQLite. Set DATABASE_URL=postgresql://USER:PASSWORD@HOST/DB for PostgreSQL. For production, configure SSL, allowed hosts, CORS origins, object storage, HTTPS, outgoing email or Telegram notifications, and a payment provider. Demo images are remote Unsplash links; inspect [Unsplash licensing](https://unsplash.com/license) before production use and replace with images licensed for your business. Contact address and branding are demo information.
 
 **Important:** Reservation records are not payment captures. Pricing is computed and stored when reserved. No dummy reservation actions. Admin analytics report recorded booking amounts (not settled cash revenue). Email delivery, restaurant table bookings, live customer review submission and payment processing are future integrations. Run automated tests before deployment.
+
+## Status
+Source-code implementation; this repository has not yet passed an installed-dependency build, migrations run or end-to-end deployment validation. Generate initial migrations with `python manage.py makemigrations` before first `migrate`. Review and commit generated migration files before production deployment.
