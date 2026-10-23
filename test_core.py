@@ -5,3 +5,8 @@ class Tests(unittest.TestCase):
         s=EventStore(); s.append('x',0,'created',{'n':1})
         self.assertTrue(s.verify('x'))
         with self.assertRaises(VersionConflict): s.append('x',0,'oops',{})
+
+    def test_empty_stream(self):
+        store = EventStore()
+        self.assertEqual(store.read("missing"), [])
+        self.assertTrue(store.verify("missing"))
